@@ -6,6 +6,8 @@ public class GridMovement1 : MonoBehaviour
 {
     
     public float moveSpeed;
+    public LayerMask solidObjectsLayer;
+    public float stamina;
 
     private bool isMoving;
     private Vector2 input;
@@ -14,7 +16,10 @@ public class GridMovement1 : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         { 
+
             moveSpeed = 10;
+
+            
         }
         else
             {
@@ -35,7 +40,9 @@ public class GridMovement1 : MonoBehaviour
                 targetPos.x += input.x;
                 targetPos.y += input.y;
 
-                StartCoroutine(Move(targetPos));
+                if (IsWalkable(targetPos))
+                    StartCoroutine(Move(targetPos));
+               
             }
         }
     }
@@ -53,5 +60,14 @@ public class GridMovement1 : MonoBehaviour
         transform.position = targetPos;
 
         isMoving = false;
+    }
+
+    private bool IsWalkable(Vector3 targetPos)
+    {
+        if (Physics2D.OverlapCircle(targetPos, 0.3f, solidObjectsLayer) != null)
+        {
+            return false;
+        }
+        return true;
     }
 }
