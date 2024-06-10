@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyFollow : MonoBehaviour
+public class RangedEnemyFollow : MonoBehaviour
 {
+
     public Transform player;
     public float moveSpeed = 1f;
     public float gridSize = 1.0f; // Size of the grid
-    public float sightRange = 5f;
+    public float sightRange = 10f;
     public LayerMask solidObjectsLayer;
 
     private Vector2 nextPosition;
     private bool isMoving;
-
+    private bool CanMove;
+    
     void Start()
     {
         nextPosition = transform.position;
         isMoving = false;
+        CanMove = true;
+       
     }
 
     void Update()
@@ -27,7 +31,7 @@ public class EnemyFollow : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
-        if (!isMoving && Vector2.Distance(transform.position, player.position) > gridSize)
+        if (!isMoving && Vector2.Distance(transform.position, player.position) > GetComponent<EnemyShooter>().shootingRange)
         {
             if (Vector2.Distance(transform.position, player.position) < sightRange)
             {
@@ -61,9 +65,10 @@ public class EnemyFollow : MonoBehaviour
             Mathf.Round(nextPosition.y / gridSize) * gridSize
         );
 
-        if(IsWalkable(nextPosition))
+        if(IsWalkable(nextPosition) && CanMove)
         // Start moving towards the next grid position
-        StartCoroutine(MoveToPosition(transform, nextPosition, moveSpeed));
+         StartCoroutine(MoveToPosition(transform, nextPosition, moveSpeed));
+        
     }
 
     System.Collections.IEnumerator MoveToPosition(Transform transform, Vector2 position, float speed)
@@ -81,14 +86,27 @@ public class EnemyFollow : MonoBehaviour
         }
 
         isMoving = false;
+    } 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.CompareTag("Enemy"))
+        {
+            CanMove = false;
+        }
+        else
+        {
+            CanMove = true;
+        }
     }
     private bool IsWalkable(Vector2 nextPosition)
     {
         if (Physics2D.OverlapCircle(nextPosition, 0.3f, solidObjectsLayer) != null)
-        {
+       {
             return false;
-        }
+       }
         return true;
     }
+
+   
 }
 

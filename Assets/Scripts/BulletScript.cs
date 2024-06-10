@@ -39,7 +39,9 @@ public class BulletScript : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
+            other.gameObject.GetComponent<PlayerHealth>().TakeDamage(20);
             Destroy(gameObject);
+            Debug.Log(other.gameObject.GetComponent<PlayerHealth>().currentHealth);
         }
     }
 }

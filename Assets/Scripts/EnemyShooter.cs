@@ -7,6 +7,7 @@ public class EnemyShooter : MonoBehaviour
     public GameObject bullet;
     public Transform bulletPos;
     public GameObject player;
+    public float shootingRange = 5;
 
     private float timer;
     // Start is called before the first frame update
@@ -20,9 +21,9 @@ public class EnemyShooter : MonoBehaviour
     {
         timer += Time.deltaTime;
         float distance = Vector2.Distance(transform.position, player.transform.position);
-        Debug.Log(distance);
+        //Debug.Log(distance);
 
-        if (distance < 4)
+        if (distance <= shootingRange)
         {
             timer += Time.deltaTime;
 
